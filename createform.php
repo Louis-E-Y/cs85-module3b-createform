@@ -2,11 +2,38 @@
 // Self-processing form for collecting user input.
 $fullName = $email = $topic = $message = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $fullName = trim($_POST['full_name'] ?? '');
-    $email = trim($_POST['email'] ?? '');
-    $topic = trim($_POST['topic'] ?? '');
-    $message = trim($_POST['message'] ?? '');
+    $fullName = validateInput($_POST['full_name'] ?? '');
+    $email = validateEmail($_POST['email'] ?? '');
+    $topic = validateInput($_POST['topic'] ?? '');
+    //check wordcount of message
+    $message = validateInput($_POST['message'] ?? '');
+    $wordCount = str_word_count($_POST['message'] ?? '');
+    // Validate message length
+    if ($wordCount < 50 || $wordCount > 150) {
+        echo "Error: Message must be between 50 and 150 words. Current word count: $wordCount.";
+        $message = '';
+    } else {
+    //validate message like the rest
+    
+    }
 }
+
+function validateInput($input) {
+    if (empty($input)) {
+        echo "Error: All fields are required.";
+        return '';
+    }
+    return htmlspecialchars(stripslashes(trim($input)));
+}
+
+function validateEmail($email) {
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        echo "Error: Invalid email format.";
+        return '';
+    }
+    return $email;
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
